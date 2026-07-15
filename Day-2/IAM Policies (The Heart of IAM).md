@@ -45,7 +45,7 @@ Every policy has these main elements:
 Let's understand each field.
 
 1. Version
-===========
+  ---------
 "Version": "2012-10-17"
 
 This is the policy language version.
@@ -57,7 +57,7 @@ Use:
 for all new policies.
 
 2. Statement
-=============
+-------------
 A policy can have one or more statements.
 
 Example:
@@ -71,7 +71,7 @@ Policy
 Each statement defines one permission rule.
 
 3. Effect
-==========
+---------
 There are only two values:
 
 Allow
@@ -87,7 +87,7 @@ or
 "Effect": "Deny"
 
 4. Action
-==========
+----------
 This defines what operations are allowed.
 
 Examples:
@@ -112,7 +112,7 @@ Multiple actions:
 
 
 5. Resource
-=============
+------------
 This defines which AWS resource the policy applies to.
 
 
