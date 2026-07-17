@@ -35,4 +35,48 @@ before checking the EC2 Instance Metadata Service (IMDS). It is not based on whi
 A. "When an EC2 instance has an IAM Role attached, the AWS CLI automatically retrieves temporary credentials from the EC2 Instance Metadata Service (IMDS).
 Those credentials are issued by AWS STS for the attached IAM Role and are automatically refreshed before they expire."
 
-=====================================================================================================================================================================
+===================================================================================================================================================================
+
+Here's the Final Piece (This Removes the Last Confusion)
+
+Imagine:
+
+Aravind
+
+↓
+
+Has AdministratorAccess
+
+Role:
+
+S3ReadRole
+
+↓
+
+AmazonS3ReadOnlyAccess
+
+Question:
+
+After assuming S3ReadRole...
+
+Can Aravind create an EC2 instance?
+
+Most beginners answer:
+
+"Yes, because Aravind is Admin."
+
+Correct answer:
+
+No.
+
+Why?
+
+Because once you assume the role, AWS evaluates the permissions of the role, not the permissions of your original IAM user.
+
+You're no longer acting with Aravind's permissions.
+
+You're acting with S3ReadRole's permissions.
+
+Since the role only has AmazonS3ReadOnlyAccess, you cannot create EC2 instances while using the assumed role credentials.
+
+==================================================================================================================================================================
