@@ -19,6 +19,17 @@ An IAM Role is an AWS identity that does not have permanent credentials.
 
 Instead of creating Access Keys, AWS provides temporary credentials whenever someone or something assumes the role.
 
+
+An IAM Role is an AWS identity that does not have permanent login credentials or access keys.
+
+Instead, a role is assumed by a trusted entity (such as an EC2 instance, Lambda function, AWS service, or IAM user), and AWS provides temporary security credentials.
+
+Key idea:
+
+IAM User → Permanent credentials
+IAM Role → Temporary credentials
+
+
 Think of it like this:
 
 IAM User
@@ -36,6 +47,8 @@ IAM Role
 No Password
 No Permanent Access Keys
 Temporary Credentials
+
+
 
 2. Why Do We Need IAM Roles?
 -------------------------------
@@ -158,7 +171,23 @@ EC2 Instance
 
 You don't attach the role directly to EC2. AWS attaches an Instance Profile, which contains the role.
 
+This is a common interview question.
 
+You cannot attach an IAM Role directly to an EC2 instance.
+
+AWS automatically wraps the role inside an Instance Profile, and the EC2 instance uses that Instance Profile to obtain temporary credentials.
+
+*. AWS STS (Security Token Service)
+------------------------------------
+STS creates temporary credentials:
+
+Access Key ID
+Secret Access Key
+Session Token
+
+These credentials expire automatically after a limited time.
+
+This is one of the biggest security advantages of IAM Roles.
 
 8. Production Example
 ---------------------
@@ -184,7 +213,7 @@ Attach it to EC2.
 Application simply calls:
 AmazonS3ClientBuilder.defaultClient()
 The AWS SDK automatically retrieves temporary credentials from the EC2 Instance Metadata Service (IMDS).
-
+The application simply calls the AWS SDK, which retrieves temporary credentials from the EC2 Instance Metadata Service (IMDS).
 
 9. How Does EC2 Get Credentials?
    -----------------------------
