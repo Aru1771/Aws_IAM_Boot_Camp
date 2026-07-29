@@ -14,3 +14,43 @@ By the end of today, you'll understand:
 5. Production use cases
 6. Troubleshooting AccessDenied errors
 7. Interview questions
+   
+Why Do We Need More Than IAM Policies?
+----------------------------------------
+Suppose you allow developers to create IAM roles.
+
+Without restrictions, a developer could create this role:
+
+{
+  "Effect": "Allow",
+  "Action": "*",
+  "Resource": "*"
+}
+
+That effectively gives them Administrator access.
+
+AWS solves this with Permissions Boundaries.
+
+
+Permission Evaluation Layers
+--------------------------------
+
+               SCP
+                │
+                ▼
+      Permission Boundary
+                │
+                ▼
+          IAM Policies
+                │
+                ▼
+        Session Policies
+                │
+                ▼
+     Resource-based Policies
+                │
+                ▼
+            Final Decision
+
+
+Every layer can restrict access.
