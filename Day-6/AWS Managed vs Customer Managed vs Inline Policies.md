@@ -23,13 +23,13 @@ Created by your organization.
 
 Example:
 
-Developer-EC2-ReadOnly
+            Developer-EC2-ReadOnly
 
 Advantages:
 
-Reusable
-Version controlled
-Follows Least Privilege
+            Reusable
+            Version controlled
+            Follows Least Privilege
 
 This is the preferred approach in production.
 
@@ -37,9 +37,9 @@ Inline Policy
 
 Attached to only one:
 
-User
-Group
-Role
+            User
+            Group
+            Role
 
 Cannot be reused.
 
