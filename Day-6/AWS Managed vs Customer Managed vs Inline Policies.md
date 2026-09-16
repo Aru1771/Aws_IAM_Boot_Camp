@@ -2,21 +2,23 @@ AWS Managed vs Customer Managed vs Inline Policies
 ===================================================
 
 AWS Managed Policy
-
+------------------
 Created by AWS.
 
 Examples:
 
-AmazonS3ReadOnlyAccess
-AmazonEC2FullAccess
-AdministratorAccess
-Advantages
-Maintained by AWS
-Easy to use
-Disadvantages
-May grant more permissions than required
-Customer Managed Policy
+      AmazonS3ReadOnlyAccess
+      AmazonEC2FullAccess
+      AdministratorAccess
+      Advantages
+      Maintained by AWS
+      Easy to use
+      Disadvantages
+      May grant more permissions than required
 
+
+Customer Managed Policy
+------------------------
 Created by your organization.
 
 Example:
@@ -43,7 +45,6 @@ Cannot be reused.
 
 Mostly used for unique one-off permission requirements.
 
-Interview Question
 
 Which policy type is recommended in production?
 
