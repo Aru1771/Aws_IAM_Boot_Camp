@@ -2,37 +2,37 @@ Trust Policies & AssumeRole
 ===============================
 This is one of the most important IAM topics for DevOps engineers. It is used in:
 
-1.EKS IAM Roles for Service Accounts (IRSA)
-2.Cross-account deployments
-3.AWS Organizations
-4.GitHub Actions → AWS authentication
-5.Jenkins → AWS authentication
-6.Terraform deployments
-7.AWS Identity Center (SSO)
+    1.EKS IAM Roles for Service Accounts (IRSA)
+    2.Cross-account deployments
+    3.AWS Organizations
+    4.GitHub Actions → AWS authentication
+    5.Jenkins → AWS authentication
+    6.Terraform deployments
+    7.AWS Identity Center (SSO)
 
 
 Today's Learning Objectives
 ----------------------------
 By the end of Day 4, you will understand:
 
-What is an AssumeRole?
-What is a Trust Policy?
-Identity Policy vs Trust Policy
-How AssumeRole works
-Cross-account role assumption
-External ID (concept)
-Hands-on Lab
-Interview Questions
+    What is an AssumeRole?
+    What is a Trust Policy?
+    Identity Policy vs Trust Policy
+    How AssumeRole works
+    Cross-account role assumption
+    External ID (concept)
+    Hands-on Lab
+    Interview Questions
 
 1. Why Do We Need AssumeRole?
   ---------------------------
 Imagine you have two AWS accounts.
 
-Production Account
-└── S3 Bucket
-
-Development Account
-└── EC2 Instance
+    Production Account
+    └── S3 Bucket
+    
+    Development Account
+    └── EC2 Instance
 
 The EC2 instance in the Development account needs to read an S3 bucket in the Production account.
 
@@ -40,17 +40,17 @@ Creating IAM users and sharing access keys is a bad practice.
 
 Instead:
 
-EC2
-   │
-Assume Role
-   │
-Production Role
-   │
-STS
-   │
-Temporary Credentials
-   │
-Access S3
+      EC2
+       │
+    Assume Role
+       │
+    Production Role
+       │
+      STS
+       │
+    Temporary Credentials
+       │
+    Access S3
 
 This is the recommended AWS approach.
 
@@ -62,77 +62,77 @@ AssumeRole is the process of temporarily becoming another IAM Role.
 
 When a user, application, or AWS service assumes a role:
 
-AWS verifies that the role trusts the caller.
-AWS STS issues temporary credentials.
-The caller uses those temporary credentials until they expire.
+    AWS verifies that the role trusts the caller.
+    AWS STS issues temporary credentials.
+    The caller uses those temporary credentials until they expire.
 
 The original identity doesn't permanently change.
 
 
 3. What is a Trust Policy?
--------------------------------
+---------------------------
 This is one of the most common interview questions.
 
 An Identity Policy answers:
 
-What actions can I perform?
+    What actions can I perform?
 
 A Trust Policy answers:
 
-Who is allowed to assume this role?
+    Who is allowed to assume this role?
 
 Every IAM Role has a Trust Policy.
 
 Example:
 
-{
-  "Version": "2012-10-17",
-  "Statement": [
     {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ec2.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": {
+            "Service": "ec2.amazonaws.com"
+          },
+          "Action": "sts:AssumeRole"
+        }
+      ]
     }
-  ]
-}
 
 Meaning:
 
-"Only the EC2 service is allowed to assume this role."
+    "Only the EC2 service is allowed to assume this role."
 
 4. Identity Policy vs Trust Policy
    ------------------------------------
 
-   | Identity Policy                      | Trust Policy                        |
-| ------------------------------------ | ----------------------------------- |
-| Attached to users, groups, or roles  | Attached only to IAM Roles          |
-| Defines **what** actions are allowed | Defines **who** can assume the role |
-| Example: `s3:GetObject`              | Example: `sts:AssumeRole` for EC2   |
+        | Identity Policy                      | Trust Policy                        |
+        | ------------------------------------ | ----------------------------------- |
+        | Attached to users, groups, or roles  | Attached only to IAM Roles          |
+        | Defines **what** actions are allowed | Defines **who** can assume the role |
+        | Example: `s3:GetObject`              | Example: `sts:AssumeRole` for EC2   |
 
 
 A role usually needs both:
 
-A trust policy so the right principal can assume it.
-Permission policies so the role can perform actions after being assumed.
+    A trust policy so the right principal can assume it.
+    Permission policies so the role can perform actions after being assumed.
 
 
 5. How AssumeRole Works
    ---------------------
 
-   IAM User / EC2 / Lambda
-          │
-Requests sts:AssumeRole
-          │
-AWS checks Trust Policy
-          │
-Allowed?
-     │         │
-    Yes       No
-     │         │
-STS returns   Access Denied
-temporary credentials
+           IAM User / EC2 / Lambda
+                  │
+        Requests sts:AssumeRole
+                  │
+        AWS checks Trust Policy
+                  │
+        Allowed?
+             │         │
+            Yes       No
+             │         │
+        STS returns   Access Denied
+        temporary credentials
 
 6. Real DevOps Example
  --------------------
@@ -140,19 +140,33 @@ A Jenkins server in one AWS account deploys infrastructure into another account.
 
 Flow:
 
-Jenkins
-    │
-IAM User or Role
-    │
-sts:AssumeRole
-    │
-Deployment Role (Target Account)
-    │
-Terraform
-    │
-Creates EC2, VPC, IAM, S3
+    Jenkins
+        │
+    IAM User or Role
+        │
+    sts:AssumeRole
+        │
+    Deployment Role (Target Account)
+        │
+    Terraform
+        │
+    Creates EC2, VPC, IAM, S3
+
+"Action": "sts:AssumeRole": 
+  
+     It means the Principal is trusted to assume MyS3Role.
 
 No permanent keys from the target account are stored in Jenkins.
+
+
+    | Principal   | Example                | Typical use              |
+    | ----------- | ---------------------- | ------------------------ |
+    | `AWS`       | AWS account / IAM role | Cross-account access     |
+    | `Service`   | `ec2.amazonaws.com`    | AWS service assumes role |
+    | `Federated` | OIDC provider          | EKS/IRSA, web identity   |
+    | `Federated` | SAML provider          | Enterprise SSO           |
+    | `*`         | Everyone               | Very broad trust         |
+
 
 
 Hands-on Lab
