@@ -6,15 +6,15 @@ The Policy Simulator helps answer:
 
 Instead of guessing, simulate:
 
-User
-
-↓
-
-Policy Simulator
-
-↓
-
-Result
+    User
+    
+    ↓
+    
+    Policy Simulator
+    
+    ↓
+    
+    Result
 
 Allow
 or
