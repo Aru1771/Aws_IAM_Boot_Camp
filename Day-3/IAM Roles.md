@@ -4,14 +4,14 @@ Goal
 
 By the end of today, you should understand:
 
-What an IAM Role is
-IAM User vs IAM Role
-Why IAM Roles are preferred over Access Keys
-Temporary Credentials
-STS (Security Token Service)
-Instance Profile
-EC2 → S3 access using IAM Role
-Hands-on Lab
+    What an IAM Role is
+    IAM User vs IAM Role
+    Why IAM Roles are preferred over Access Keys
+    Temporary Credentials
+    STS (Security Token Service)
+    Instance Profile
+    EC2 → S3 access using IAM Role
+    Hands-on Lab 
 
 1. What is an IAM Role?
 ------------------------
@@ -26,27 +26,27 @@ Instead, a role is assumed by a trusted entity (such as an EC2 instance, Lambda 
 
 Key idea:
 
-IAM User → Permanent credentials
-IAM Role → Temporary credentials
+    IAM User → Permanent credentials
+    IAM Role → Temporary credentials
 
 
 Think of it like this:
 
-IAM User
-    ↓
-Permanent Identity
-Username + Password
-Access Key
-Secret Key
+    IAM User
+        ↓
+    Permanent Identity
+    Username + Password
+    Access Key
+    Secret Key
 
 
 Whereas:
 
-IAM Role
-    ↓
-No Password
-No Permanent Access Keys
-Temporary Credentials
+    IAM Role
+        ↓
+    No Password
+    No Permanent Access Keys
+    Temporary Credentials
 
 
 
@@ -58,30 +58,30 @@ Your application needs to read files from an S3 bucket.
 
 Wrong Approach ❌
 
-Store Access Keys inside the EC2 instance.
+    Store Access Keys inside the EC2 instance.
 
-EC2
- ├── Access Key
- ├── Secret Key
- └── Application
+    EC2
+     ├── Access Key
+     ├── Secret Key
+     └── Application
 
  Problems:
 -----------
-Access keys can be leaked.
-Keys need manual rotation.
-If the instance is compromised, the attacker gets long-lived credentials.
+    Access keys can be leaked.
+    Keys need manual rotation.
+    If the instance is compromised, the attacker gets long-lived credentials.
 
 Correct Approach ✅
 -------------------
 Attach an IAM Role to the EC2 instance.
 
-EC2
-   │
-IAM Role
-   │
-Temporary Credentials
-   │
-S3
+    EC2
+       │
+    IAM Role
+       │
+    Temporary Credentials
+       │
+    S3
 
 No Access Keys are stored on the server.
 
@@ -89,46 +89,42 @@ No Access Keys are stored on the server.
 3. IAM User vs IAM Role
 ------------------------
 
-| IAM User                    | IAM Role                                               |
-| --------------------------- | ------------------------------------------------------ |
-| Permanent identity          | Temporary identity                                     |
-| Password/Login              | No login                                               |
-| Access Keys                 | Temporary credentials                                  |
-| Used by humans              | Used by AWS services, applications, or federated users |
-| Credentials must be rotated | Credentials are automatically rotated by AWS           |
+    | IAM User                    | IAM Role                                               |
+    | --------------------------- | ------------------------------------------------------ |
+    | Permanent identity          | Temporary identity                                     |
+    | Password/Login              | No login                                               |
+    | Access Keys                 | Temporary credentials                                  |
+    | Used by humans              | Used by AWS services, applications, or federated users |
+    | Credentials must be rotated | Credentials are automatically rotated by AWS           |
 
 4. What is STS?
 ---------------
 STS stands for:
 
-Security Token Service
+    Security Token Service
 
-Its job is to issue:
-
-Temporary AWS Credentials
-
-Whenever a role is assumed.
+Its job is to issue: Temporary AWS Credentials Whenever a role is assumed.
 
 
 5. Real Flow
 ------------
 Suppose:
 
-EC2
- ↓
-Needs S3 Access
+    EC2
+     ↓
+    Needs S3 Access
 
 Flow:
 
-EC2
- ↓
-IAM Role
- ↓
-STS
- ↓
-Temporary Credentials
- ↓
-S3
+    EC2
+     ↓
+    IAM Role
+     ↓
+    STS
+     ↓
+    Temporary Credentials
+     ↓
+    S3
 
 The application never stores Access Keys.
 
@@ -136,17 +132,17 @@ The application never stores Access Keys.
 ------------------------------------
 AWS automatically generates:
 
-Access Key ID
-
-Secret Access Key
-
-Session Token
+    Access Key ID
+    
+    Secret Access Key
+    
+    Session Token
 
 These expire automatically after a limited time.
 
 Example:
 
-Valid for 1 hour
+    Valid for 1 hour
 
 After expiration:
 
@@ -163,11 +159,11 @@ An Instance Profile is a container for an IAM Role that allows an EC2 instance t
 
 Think of it as:
 
-IAM Role
-      │
-Instance Profile
-      │
-EC2 Instance
+    IAM Role
+          │
+    Instance Profile
+          │
+    EC2 Instance
 
 You don't attach the role directly to EC2. AWS attaches an Instance Profile, which contains the role.
 
@@ -181,9 +177,9 @@ AWS automatically wraps the role inside an Instance Profile, and the EC2 instanc
 ------------------------------------
 STS creates temporary credentials:
 
-Access Key ID
-Secret Access Key
-Session Token
+    Access Key ID
+    Secret Access Key
+    Session Token
 
 These credentials expire automatically after a limited time.
 
@@ -191,48 +187,53 @@ This is one of the biggest security advantages of IAM Roles.
 
 8. Production Example
 ---------------------
-Suppose you have:
-Spring Boot Application
-Running on EC2
+    Suppose you have:
+    Spring Boot Application
+    Running on EC2
 
 It needs to:
-Read Files
-Write Logs
-Upload Reports
+
+    Read Files
+    Write Logs
+    Upload Reports
 
 Instead of configuring:
-Access Key
-Secret Key
+
+    Access Key
+    Secret Key
 
 You create:
-IAM Role
-↓
-AmazonS3ReadOnlyAccess
+
+    IAM Role
+    ↓
+    AmazonS3ReadOnlyAccess
 Attach it to EC2.
 
 Application simply calls:
+
 AmazonS3ClientBuilder.defaultClient()
+
 The AWS SDK automatically retrieves temporary credentials from the EC2 Instance Metadata Service (IMDS).
 The application simply calls the AWS SDK, which retrieves temporary credentials from the EC2 Instance Metadata Service (IMDS).
 
 9. How Does EC2 Get Credentials?
    -----------------------------
 
-   Application
-      │
-AWS SDK
-      │
-EC2 Metadata Service (IMDS)
-      │
-Instance Profile
-      │
-IAM Role
-      │
-STS
-      │
-Temporary Credentials
-      │
-   S3
+           Application
+              │
+          AWS SDK
+              │
+        EC2 Metadata Service (IMDS)
+              │
+        Instance Profile
+              │
+        IAM Role
+              │
+            STS
+              │
+        Temporary Credentials
+              │
+              S3
 
 This is completely automatic.
 
@@ -260,17 +261,17 @@ No secrets stored
  -----------------------
 Use IAM Roles for:
 
-EC2 → S3
-EC2 → DynamoDB
-Lambda → S3
-Lambda → SNS
-ECS Task → S3
-EKS Pods → AWS Services (using IRSA)
-AWS Load Balancer Controller
-cert-manager (Route53 DNS updates)
-ExternalDNS
-EBS CSI Driver
-Recommended by AWS
+    EC2 → S3
+    EC2 → DynamoDB
+    Lambda → S3
+    Lambda → SNS
+    ECS Task → S3
+    EKS Pods → AWS Services (using IRSA)
+    AWS Load Balancer Controller
+    cert-manager (Route53 DNS updates)
+    ExternalDNS
+    EBS CSI Driver
+    Recommended by AWS
 
 
 🧪 Hands-on Lab 1
